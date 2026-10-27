@@ -3,3 +3,4 @@ node_modules
 .next
 build
 *.hbs
+qino/_generated/

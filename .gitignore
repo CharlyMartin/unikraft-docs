@@ -1,4 +1,4 @@
 node_modules
-.contentlayer
+qino/_generated/
 .next
 configs/search-meta.json

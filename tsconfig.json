@@ -19,8 +19,7 @@
     "paths": {
       "hooks/*": ["src/hooks/*"],
       "components/*": ["src/components/*"],
-      "utils/*": ["src/utils/*"],
-      "contentlayer/generated": ["./.contentlayer/generated"]
+      "utils/*": ["src/utils/*"]
     },
     "incremental": true
   },
@@ -34,8 +33,7 @@
     "src/modules.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "**/*.svg",
-    ".contentlayer/generated"
+    "**/*.svg"
   ],
   "exclude": ["node_modules"]
 }

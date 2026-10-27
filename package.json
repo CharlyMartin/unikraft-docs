@@ -2,8 +2,10 @@
   "name": "@unikraft/docs",
   "version": "2.0.0",
   "scripts": {
+    "predev": "qino build",
     "dev": "next",
     "postinstall": "npm run search-meta:gen",
+    "prebuild": "qino build",
     "build": "next build",
     "lint": "next lint",
     "prepare": "husky install",
@@ -14,12 +16,12 @@
     "search-meta:gen": "tsx scripts/get-search-meta.ts",
     "contributing:gen": "tsx scripts/build-contributing-page.ts",
     "start": "next start",
-    "cache:clean": "rm -rf .next .contentlayer",
+    "cache:clean": "rm -rf .next qino/_generated",
     "clean": "rm -rf pnpm-lock.yaml node_modules",
     "reinstall": "pnpm clean && pnpm i",
     "deps": "pnpm up '@chakra-ui/*' --latest",
     "create:docs": "plop component",
-    "content": "contentlayer build --clearCache"
+    "content": "qino build"
   },
   "dependencies": {
     "@chakra-ui/cli": "2.4.1",
@@ -39,7 +41,6 @@
     "@octokit/rest": "^19.0.5",
     "@qino/cms": "^0.16.0",
     "clsx": "^2.0.0",
-    "contentlayer": "0.3.0",
     "date-fns": "^2.28.0",
     "docsearch.js": "^2.6.3",
     "focus-visible": "5.2.0",
@@ -56,7 +57,6 @@
     "match-sorter": "^6.3.1",
     "mdx-bundler": "^9.0.1",
     "next": "^12.2.0",
-    "next-contentlayer": "0.3.0",
     "next-seo": "^5.4.0",
     "octokit": "^2.0.4",
     "plop": "^3.1.2",
