@@ -1,14 +1,16 @@
 import { MDXComponents } from 'components/mdx-components'
-import { allDocs } from 'contentlayer/generated'
+import { useMDXComponent } from 'hooks/use-mdx-component'
 import MDXLayout from 'layouts/mdx'
 import { GetStaticPaths, InferGetStaticPropsType } from 'next'
-import { useMDXComponent } from 'next-contentlayer/hooks'
 import { toArray } from 'utils/js-utils'
+import { compileMDX, toProps } from 'utils/mdx'
+import { docsTree } from '../../qino/trees/docs'
 
 export default function Page({
   doc,
+  code,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  const Component = useMDXComponent(doc.body.code)
+  const Component = useMDXComponent(code)
   return (
     <MDXLayout frontmatter={doc.frontMatter}>
       <Component components={MDXComponents as any} />
@@ -17,20 +19,24 @@ export default function Page({
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const docs = allDocs
-    .map((d) => d._id.replace('docs/', '').replace('.mdx', '').split('/'))
-    .map((id) => {
-      if (id[id.length-1] === 'index') {
-        id = id.slice(0, -1)
-      }
-      return { params: { slug: id } }
-    })
+  const nodes = await docsTree.getFlatTree()
+  const docs = await Promise.all(
+    nodes.map((node) => docsTree.getEntry(node.slug)),
+  )
+  const paths = docs
+    .filter((doc) => !doc.unlisted)
+    .map((doc) => ({ params: { slug: doc._meta.slug.split('/') } }))
 
-  return { paths: docs, fallback: false }
+  return { paths, fallback: false }
 }
 
 export const getStaticProps = async (ctx) => {
   const params = toArray(ctx.params.slug)
-  const doc = allDocs.find((d) =>  d.slug == '/docs/' + params.join('/'))
-  return { props: { doc } }
+  const doc = await docsTree.getEntry(params.join('/'))
+  return {
+    props: toProps({
+      doc: { frontMatter: doc.frontMatter },
+      code: await compileMDX(doc.markdown),
+    }),
+  }
 }

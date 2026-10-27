@@ -1,14 +1,16 @@
 import { MDXComponents } from 'components/mdx-components'
-import { allHackathons } from 'contentlayer/generated'
+import { useMDXComponent } from 'hooks/use-mdx-component'
 import MDXLayout from 'layouts/mdx'
 import { GetStaticPaths, InferGetStaticPropsType } from 'next'
-import { useMDXComponent } from 'next-contentlayer/hooks'
 import { toArray } from 'utils/js-utils'
+import { compileMDX, toProps } from 'utils/mdx'
+import { hackathonCollection } from '../../qino/collections/hackathons'
 
 export default function Page({
   doc,
+  code,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  const Component = useMDXComponent(doc.body.code)
+  const Component = useMDXComponent(code)
   return (
     <MDXLayout frontmatter={doc.frontMatter}>
       <Component components={MDXComponents as any} />
@@ -17,20 +19,21 @@ export default function Page({
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const hackathons = allHackathons
-    .map((d) => d._id.replace('hackathons/', '').replace('index.mdx', '').split('/'))
-    .map((id) => {
-      if (id[id.length-1] === 'index') {
-        id = id.slice(0, -1)
-      }
-      return { params: { slug: id } }
-    })
+  const hackathons = await hackathonCollection.getEntries()
+  const paths = hackathons.map((hackathon) => ({
+    params: { slug: [hackathon._meta.slug] },
+  }))
 
-  return { paths: hackathons, fallback: false }
+  return { paths, fallback: false }
 }
 
 export const getStaticProps = async (ctx) => {
   const params = toArray(ctx.params.slug)
-  const doc = allHackathons.find((d) =>  d.slug == '/hackathons/' + params.join('/'))
-  return { props: { doc } }
+  const doc = await hackathonCollection.getEntry(params.join('/'))
+  return {
+    props: toProps({
+      doc: { frontMatter: doc.frontMatter },
+      code: await compileMDX(doc.markdown),
+    }),
+  }
 }

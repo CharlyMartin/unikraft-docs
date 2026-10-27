@@ -1,4 +1,3 @@
-import { allReleases } from 'contentlayer/generated'
 import type {
   InferGetStaticPropsType,
   GetStaticProps,
@@ -6,15 +5,19 @@ import type {
 } from 'next'
 import { useRouter } from 'next/router'
 import semverMaxSatisfying from 'semver/ranges/max-satisfying'
-import { useMDXComponent } from 'next-contentlayer/hooks'
 import { useEffect } from 'react'
 import { MDXComponents } from 'components/mdx-components'
+import { useMDXComponent } from 'hooks/use-mdx-component'
 import ReleaseLayout from 'layouts/release'
+import { compileMDX, toProps } from 'utils/mdx'
+import { releaseCollection } from '../../qino/collections/releases'
 
 export default function Page({
   doc,
+  code,
+  releases,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  const Component = useMDXComponent(doc.body.code)
+  const Component = useMDXComponent(code)
   const router = useRouter()
 
   useEffect(() => {
@@ -24,15 +27,21 @@ export default function Page({
   }, [router, doc])
 
   return (
-    <ReleaseLayout hideToc release={doc} frontmatter={doc.frontMatter}>
+    <ReleaseLayout
+      hideToc
+      release={doc}
+      releases={releases}
+      frontmatter={doc.frontMatter}
+    >
       <Component components={MDXComponents as any} />
     </ReleaseLayout>
   )
 }
 
-export const getStaticPaths: GetStaticPaths = () => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  const releases = await releaseCollection.getEntries()
   const paths = [
-    ...allReleases.map((doc) => ({
+    ...releases.map((doc) => ({
       params: { version: `v${doc.version}` },
     })),
     {
@@ -46,6 +55,7 @@ export const getStaticPaths: GetStaticPaths = () => {
 }
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
+  const allReleases = await releaseCollection.getEntries()
   let versionParam = ctx.params.version
 
   if (versionParam === 'latest') {
@@ -54,13 +64,25 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
       '*',
     )}`
   }
-  const doc = allReleases.find(
+  const { markdown, raw, _meta, ...release } = allReleases.find(
     ({ version }) => `v${version}` === versionParam,
   )
-
-  doc.frontMatter.title = `v${doc.version} (${doc.codename})`
+  const doc = {
+    ...release,
+    frontMatter: {
+      ...release.frontMatter,
+      title: `v${release.version} (${release.codename})`,
+    },
+  }
 
   return {
-    props: { doc },
+    props: toProps({
+      doc,
+      code: await compileMDX(markdown),
+      releases: allReleases.map(({ version, codename }) => ({
+        version,
+        codename,
+      })),
+    }),
   }
 }

@@ -1,14 +1,16 @@
 import { MDXComponents } from 'components/mdx-components'
-import { allCommunities } from 'contentlayer/generated'
+import { useMDXComponent } from 'hooks/use-mdx-component'
 import MDXLayout from 'layouts/mdx'
 import { GetStaticPaths, InferGetStaticPropsType } from 'next'
-import { useMDXComponent } from 'next-contentlayer/hooks'
 import { toArray } from 'utils/js-utils'
+import { compileMDX, toProps } from 'utils/mdx'
+import { communityCollection } from '../../qino/collections/community'
 
 export default function Page({
   doc,
+  code,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  const Component = useMDXComponent(doc.body.code)
+  const Component = useMDXComponent(code)
   return (
     <MDXLayout frontmatter={doc.frontMatter}>
       <Component components={MDXComponents as any} />
@@ -17,16 +19,20 @@ export default function Page({
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const docs = allCommunities
-    .map((t) => t._id.replace('community/', '').replace('.mdx', ''))
-    .map((id) => ({ params: { slug: id.split('/') } }))
-  return { paths: docs, fallback: false }
+  const docs = await communityCollection.getEntries()
+  const paths = docs.map((doc) => ({
+    params: { slug: doc._meta.slug.split('/') },
+  }))
+  return { paths, fallback: false }
 }
 
 export const getStaticProps = async (ctx) => {
   const params = toArray(ctx.params.slug)
-  const doc = allCommunities.find((doc) =>
-    doc._id.includes(params.join('/')),
-  )
-  return { props: { doc } }
+  const doc = await communityCollection.getEntry(params.join('/'))
+  return {
+    props: toProps({
+      doc: { frontMatter: doc.frontMatter },
+      code: await compileMDX(doc.markdown),
+    }),
+  }
 }

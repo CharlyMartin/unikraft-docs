@@ -12,14 +12,21 @@ import {
   CardHeader,
   chakra,
 } from '@chakra-ui/react'
-import { allGuides } from 'contentlayer/generated'
 import Footer from 'components/footer'
 import SEO from 'components/seo'
 import Header from 'components/header'
 import NextLink from 'next/link'
 import { t } from 'utils/i18n'
-import { Guide as IGuide } from 'contentlayer/generated'
+import type { Infer } from '@qino/cms'
+import { InferGetStaticPropsType } from 'next'
+import { toProps } from 'utils/mdx'
+import { guideCollection } from '../../qino/collections/guides'
 import Container from 'components/container'
+
+type IGuide = Pick<
+  Infer<typeof guideCollection>['output'],
+  'title' | 'description' | 'slug' | 'image'
+>
 
 function Guide(props: { guide: IGuide }) {
   const {
@@ -100,10 +107,7 @@ function Guide(props: { guide: IGuide }) {
   )
 }
 
-function Guides() {
-  const guides = allGuides.sort((a, b) => (
-    compareDesc(new Date(a.publishedDate), new Date(b.publishedDate)))
-  )
+function Guides({ guides }: InferGetStaticPropsType<typeof getStaticProps>) {
 
   return (
     <>
@@ -160,6 +164,22 @@ function Guides() {
       </Grid>
     </>
   )
+}
+
+export async function getStaticProps() {
+  const guides = await guideCollection.getEntries()
+  const entries: IGuide[] = guides
+    .sort((a, b) =>
+      compareDesc(new Date(a.publishedDate), new Date(b.publishedDate)),
+    )
+    .map(({ title, description, slug, image }) => ({
+      title,
+      description,
+      slug,
+      image,
+    }))
+
+  return { props: toProps({ guides: entries }) }
 }
 
 export default Guides

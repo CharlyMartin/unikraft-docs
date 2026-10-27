@@ -1,14 +1,15 @@
 import { MDXComponents } from 'components/mdx-components'
-import { allGuides } from 'contentlayer/generated'
+import { useMDXComponent } from 'hooks/use-mdx-component'
 import MDXTutorialLayout from 'layouts/guide'
 import { GetStaticPaths, InferGetStaticPropsType } from 'next'
-import { useMDXComponent } from 'next-contentlayer/hooks'
-import { toArray } from 'utils/js-utils'
+import { compileMDX, toProps } from 'utils/mdx'
+import { guideCollection } from '../../qino/collections/guides'
 
 export default function Page({
   guide,
+  code,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  const Component = useMDXComponent(guide.body.code)
+  const Component = useMDXComponent(code)
   return (
     <MDXTutorialLayout frontmatter={guide.frontMatter}>
       <Component components={MDXComponents as any} />
@@ -17,13 +18,12 @@ export default function Page({
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const guides = allGuides
-    .map((t) =>
-      t._id.replace('guides/', '').replace('.mdx', '').replace('/index', ''),
-    )
-    .map((id) => ({ params: { slug: [id.replace('guides/', '')] } }))
+  const guides = await guideCollection.getEntries()
+  const paths = guides.map((guide) => ({
+    params: { slug: [guide._meta.slug] },
+  }))
 
-  return { paths: guides, fallback: false }
+  return { paths, fallback: false }
 }
 
 export const getStaticProps = async (ctx) => {
@@ -31,7 +31,12 @@ export const getStaticProps = async (ctx) => {
     ? ctx.params.slug
     : [ctx.params.slug]
 
-  const guide = allGuides.find((guide) => guide._id.includes(params.join('/')))
+  const guide = await guideCollection.getEntry(params.join('/'))
 
-  return { props: { guide } }
+  return {
+    props: toProps({
+      guide: { frontMatter: guide.frontMatter },
+      code: await compileMDX(guide.markdown),
+    }),
+  }
 }

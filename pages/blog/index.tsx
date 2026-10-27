@@ -22,17 +22,24 @@ import { RiPresentationFill } from 'react-icons/ri'
 import { MdOutlineMenuBook } from 'react-icons/md'
 import { GrCertificate } from 'react-icons/gr'
 import { IoCalendarSharp } from 'react-icons/io5'
-import { allBlogs } from 'contentlayer/generated'
 import Container from 'components/container'
 import Footer from 'components/footer'
 import Header from 'components/header'
 import SEO from 'components/seo'
 import { convertBackticksToInlineCode } from 'utils/convert-backticks-to-inline-code'
-import { Blog as IBlog } from 'contentlayer/generated'
+import type { Infer } from '@qino/cms'
+import { InferGetStaticPropsType } from 'next'
+import { blogCollection } from '../../qino/collections/blog'
 import { IconType } from 'react-icons/lib'
 import { ReactElement } from 'react'
+import { toProps } from 'utils/mdx'
 import { DiscordCard } from 'components/discord-card'
 import { UnikraftCloudAd } from 'components/unikraft-cloud-ad'
+
+type IBlog = Pick<
+  Infer<typeof blogCollection>['output'],
+  'title' | 'authors' | 'slug' | 'publishedDate' | 'description' | 'tags'
+>
 
 const BlogTags = (props: any) => {
   const { marginTop = 0, tags } = props
@@ -207,10 +214,7 @@ function BlogEntry(props: { entry: IBlog }) {
   )
 }
 
-function Blogs() {
-  const blogs = allBlogs.sort((a, b) => (
-    compareDesc(new Date(a.publishedDate), new Date(b.publishedDate)))
-  )
+function Blogs({ blogs }: InferGetStaticPropsType<typeof getStaticProps>) {
 
   return (
     <>
@@ -333,6 +337,24 @@ function Blogs() {
       </Grid>
     </>
   )
+}
+
+export async function getStaticProps() {
+  const blogs = await blogCollection.getEntries()
+  const entries: IBlog[] = blogs
+    .sort((a, b) =>
+      compareDesc(new Date(a.publishedDate), new Date(b.publishedDate)),
+    )
+    .map(({ title, authors, slug, publishedDate, description, tags }) => ({
+      title,
+      authors,
+      slug,
+      publishedDate,
+      description,
+      tags,
+    }))
+
+  return { props: toProps({ blogs: entries }) }
 }
 
 export default Blogs

@@ -1,13 +1,15 @@
-import { allBlogs } from 'contentlayer/generated'
 import { GetStaticPaths, InferGetStaticPropsType } from 'next'
-import { useMDXComponent } from 'next-contentlayer/hooks'
 import { MDXComponents } from 'components/mdx-components'
+import { useMDXComponent } from 'hooks/use-mdx-component'
 import BlogLayout from 'layouts/blog'
+import { compileMDX, toProps } from 'utils/mdx'
+import { blogCollection } from '../../qino/collections/blog'
 
 export default function Page({
   blog,
+  code,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  const Component = useMDXComponent(blog.body.code)
+  const Component = useMDXComponent(code)
   return (
     <BlogLayout frontmatter={blog.frontMatter}>
       <Component components={MDXComponents as any} />
@@ -16,13 +18,10 @@ export default function Page({
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const blogs = allBlogs
-    .map((t) =>
-      t._id.replace('blog/', '').replace('.mdx', '').replace('/index', ''),
-    )
-    .map((id) => ({ params: { slug: [id.replace('blog/', '')] } }))
+  const blogs = await blogCollection.getEntries()
+  const paths = blogs.map((blog) => ({ params: { slug: [blog._meta.slug] } }))
 
-  return { paths: blogs, fallback: false }
+  return { paths, fallback: false }
 }
 
 export const getStaticProps = async (ctx) => {
@@ -30,7 +29,12 @@ export const getStaticProps = async (ctx) => {
     ? ctx.params.slug
     : [ctx.params.slug]
 
-  const blog = allBlogs.find((blog) => blog._id.includes(params.join('/')))
+  const blog = await blogCollection.getEntry(params.join('/'))
 
-  return { props: { blog } }
+  return {
+    props: toProps({
+      blog: { frontMatter: blog.frontMatter },
+      code: await compileMDX(blog.markdown),
+    }),
+  }
 }

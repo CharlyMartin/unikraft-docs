@@ -13,7 +13,6 @@ import { Frontmatter } from 'src/types/frontmatter'
 import { List, ListItem } from '@chakra-ui/react'
 import SidebarLink from 'components/sidebar/sidebar-link'
 import NextLink from 'next/link'
-import { allReleases, Releases as IRelease } from 'contentlayer/generated'
 import TocNav from 'components/toc-nav'
 import { t } from 'utils/i18n'
 import { PiCalendarDuotone, PiGitCommitBold } from 'react-icons/pi'
@@ -51,14 +50,26 @@ export function getRoutes(slug: string): RouteItem[] {
   return routes as RouteItem[]
 }
 
-export function getVersions(): RouteItem[] {
-  var releasesMap = allReleases.reduce(function(map, obj) {
+export interface ReleaseVersion {
+  version: string
+  codename: string
+}
+
+export interface Release extends ReleaseVersion {
+  commit: string
+  releaseDate: string
+  changelog?: string
+  blogPost?: string
+}
+
+export function getVersions(releases: ReleaseVersion[]): RouteItem[] {
+  var releasesMap = releases.reduce(function(map, obj) {
     map[obj.version] = obj;
     return map;
   }, {});
 
   return semverRSort(
-    allReleases.map(({ version }) => version),
+    releases.map(({ version }) => version),
   ).map((version) => ({
     title: `v${version} (${releasesMap[version].codename})`,
     path: `/releases/v${version}`,
@@ -67,14 +78,15 @@ export function getVersions(): RouteItem[] {
 
 interface MDXLayoutProps {
   frontmatter: Frontmatter
-  release: IRelease
+  release: Release
+  releases: ReleaseVersion[]
   children: ReactNode
   hideToc?: boolean
   maxWidth?: string
 }
 
 export default function MDXLayout(props: MDXLayoutProps) {
-  const { frontmatter, release, children, maxWidth } = props
+  const { frontmatter, release, releases, children, maxWidth } = props
 
   const topBar = [
     {
@@ -139,7 +151,7 @@ export default function MDXLayout(props: MDXLayoutProps) {
   ]
 
   const routes = getRoutes(frontmatter.slug)
-  const versions = getVersions()
+  const versions = getVersions(releases)
   return (
     <PageContainer
       hideToc={true}

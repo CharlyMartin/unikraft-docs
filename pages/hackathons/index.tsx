@@ -16,13 +16,20 @@ import {
   StackDivider,
   Text
 } from '@chakra-ui/react'
-import { allHackathons } from 'contentlayer/generated'
 import MDXLayout from 'layouts/mdx'
 import NextLink from 'next/link'
 import { t } from 'utils/i18n'
-import { Hackathons as IHackathon } from 'contentlayer/generated'
+import type { Infer } from '@qino/cms'
+import { InferGetStaticPropsType } from 'next'
+import { toProps } from 'utils/mdx'
+import { hackathonCollection } from '../../qino/collections/hackathons'
 import { PiNotePencilBold } from 'react-icons/pi'
 import { IoArrowForward } from 'react-icons/io5'
+
+type IHackathon = Omit<
+  Infer<typeof hackathonCollection>['output'],
+  'markdown' | 'raw' | '_meta' | 'frontMatter'
+>
 
 function Hackathon(props: { hackathon: IHackathon }) {
   const {
@@ -103,8 +110,9 @@ function Hackathon(props: { hackathon: IHackathon }) {
   )
 }
 
-function Hackathons() {
-  const hackathons = allHackathons.sort((a, b) => compareDesc(new Date(a.startDate), new Date(b.startDate)))
+function Hackathons({
+  hackathons,
+}: InferGetStaticPropsType<typeof getStaticProps>) {
 
   return (
     <MDXLayout
@@ -130,6 +138,15 @@ function Hackathons() {
       </SimpleGrid>
     </MDXLayout>
   )
+}
+
+export async function getStaticProps() {
+  const hackathons = await hackathonCollection.getEntries()
+  const entries: IHackathon[] = hackathons
+    .sort((a, b) => compareDesc(new Date(a.startDate), new Date(b.startDate)))
+    .map(({ markdown, raw, _meta, frontMatter, ...hackathon }) => hackathon)
+
+  return { props: toProps({ hackathons: entries }) }
 }
 
 export default Hackathons
