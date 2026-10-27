@@ -7,7 +7,7 @@
     "postinstall": "npm run search-meta:gen",
     "prebuild": "qino build",
     "build": "next build",
-    "lint": "next lint",
+    "lint": "eslint pages src --ext .js,.jsx,.ts,.tsx",
     "prepare": "husky install",
     "gen:theme-typings": "chakra-cli tokens theme.ts",
     "avatars:gen": "tsx scripts/avatars.ts",
