@@ -29,7 +29,7 @@ interface HitProps {
 
 function Hit({ hit, children }: HitProps) {
   return (
-    <Link href={hit.url} passHref>
+    <Link href={hit.url} passHref legacyBehavior>
       <a>{children}</a>
     </Link>
   )

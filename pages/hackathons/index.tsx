@@ -59,7 +59,7 @@ function Hackathon(props: { hackathon: IHackathon }) {
       transition='all 0.1s ease-in-out'
       _hover={{ textDecoration: 'none', translateY: '-2px', shadow: 'md' }}
     >
-      <NextLink href={slug} passHref>
+      <NextLink href={slug} passHref legacyBehavior>
         <chakra.a display='block'>
           <Image
             objectFit='cover'
@@ -84,7 +84,7 @@ function Hackathon(props: { hackathon: IHackathon }) {
         {
           new Date(startDate) > new Date(new Date().toDateString()) &&
           (
-          <NextLink href={registerForm} passHref>
+          <NextLink href={registerForm} passHref legacyBehavior>
             <Button
               as='a'
               variant='outline'
@@ -96,7 +96,7 @@ function Hackathon(props: { hackathon: IHackathon }) {
           </NextLink>
           )
         }
-        <NextLink href={slug} passHref>
+        <NextLink href={slug} passHref legacyBehavior>
           <Button
             as='a'
             variant='ghost'

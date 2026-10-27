@@ -74,7 +74,7 @@ export default function LandingHero() {
               p='2'
               pr='4'
             >
-              <NextLink href={announce.href} passHref>
+              <NextLink href={announce.href} passHref legacyBehavior>
                 <chakra.a
                   as={Box}
                   role={'group'}
@@ -187,7 +187,7 @@ export default function LandingHero() {
                 'xl': 'auto'
               }}
             >
-              <NextLink href='/docs/getting-started' passHref>
+              <NextLink href='/docs/getting-started' passHref legacyBehavior>
                 <Button
                   h='4rem'
                   px='40px'

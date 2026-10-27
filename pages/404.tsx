@@ -91,12 +91,12 @@ const NotFoundPage = () => {
                     borderTopColor: 'slate.700'
                   }}
                 >
-                  <NextLink href="/" passHref>
+                  <NextLink href="/" passHref legacyBehavior>
                     <Button variant='solid' colorScheme='blue'>
                     {t('notfound.take-me-home')}
                     </Button>
                   </NextLink>
-                  <NextLink href="https://github.com/unikraft/docs/issues/new" passHref>
+                  <NextLink href="https://github.com/unikraft/docs/issues/new" passHref legacyBehavior>
                     <Button variant='ghost' colorScheme='blue'>
                     {t('notfound.open-an-issue')}
                     </Button>

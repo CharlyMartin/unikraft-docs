@@ -182,7 +182,7 @@ export function GreenStrip(props: BoxProps) {
             <GreenPowerUsage />
           </Box>
 
-          <NextLink href={'/docs/concepts/efficiency'} passHref>
+          <NextLink href={'/docs/concepts/efficiency'} passHref legacyBehavior>
             <chakra.a
               as={Box}
               role={'group'}

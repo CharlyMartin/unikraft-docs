@@ -98,7 +98,7 @@ export default function MDXLayout(props: MDXLayoutProps) {
       icon: PiGitCommitBold,
       label: 'Git Commit',
       text: 
-      <NextLink href={`https://github.com/unikraft/unikraft/tree/RELEASE-${release.version}`} passHref>
+      <NextLink href={`https://github.com/unikraft/unikraft/tree/RELEASE-${release.version}`} passHref legacyBehavior>
         <chakra.a
           as={Code}
           variant={'outline'}
@@ -116,7 +116,7 @@ export default function MDXLayout(props: MDXLayoutProps) {
       icon: MdOutlineDifference,
       label: 'Changelog',
       text: release.changelog !== undefined ? (
-        <NextLink href={release.changelog} passHref>
+        <NextLink href={release.changelog} passHref legacyBehavior>
           <chakra.a
             textDecoration={'underline'}
             textUnderlineOffset={'2px'}
@@ -134,7 +134,7 @@ export default function MDXLayout(props: MDXLayoutProps) {
       icon: ImNewspaper,
       label: 'Blog Post',
       text: release.blogPost !== undefined ? (
-        <NextLink href={release.blogPost} passHref>
+        <NextLink href={release.blogPost} passHref legacyBehavior>
           <chakra.a
             textDecoration={'underline'}
             textUnderlineOffset={'2px'}

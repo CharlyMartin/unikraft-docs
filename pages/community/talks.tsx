@@ -47,7 +47,7 @@ function Talk(props: { talk: ITalk }) {
       transition='all 0.1s ease-in-out'
       _hover={{ textDecoration: 'none', translateY: '-2px', shadow: 'md' }}
     >
-      <NextLink href={video || slides || "/404"} passHref>
+      <NextLink href={video || slides || "/404"} passHref legacyBehavior>
         <chakra.a display='block'>
           <Image
             objectFit='cover'
@@ -71,7 +71,7 @@ function Talk(props: { talk: ITalk }) {
         }}
       >
         { video && 
-          <NextLink href={video} passHref>
+          <NextLink href={video} passHref legacyBehavior>
             <Button
               as='a'
               flex='1' 
@@ -83,7 +83,7 @@ function Talk(props: { talk: ITalk }) {
           </NextLink>
         }
         { slides && 
-          <NextLink href={slides} passHref>
+          <NextLink href={slides} passHref legacyBehavior>
             <Button
               as='a'
               flex='1' 
@@ -95,7 +95,7 @@ function Talk(props: { talk: ITalk }) {
           </NextLink>
         }
         { url && 
-          <NextLink href={url} passHref>
+          <NextLink href={url} passHref legacyBehavior>
             <Button
               as='a'
               flex='1' 

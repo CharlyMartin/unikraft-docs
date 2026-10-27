@@ -132,7 +132,7 @@ export function KraftKitStrip(props: BoxProps) {
               }}
               direction={{ base: 'column', sm: 'row' }}
             >
-              <NextLink href={`/docs/cli`} passHref>
+              <NextLink href={`/docs/cli`} passHref legacyBehavior>
                 <chakra.a
                   as={Button}
                   size={'lg'}
@@ -212,7 +212,7 @@ export function KraftKitStrip(props: BoxProps) {
               <Text color='slate.200' pb='1'>
                 Library selection, native integration to build and run instances to help developers in VS Code stay confident and productive.
               </Text>
-              <NextLink href={`https://github.com/unikraft/ide-vscode`} passHref>
+              <NextLink href={`https://github.com/unikraft/ide-vscode`} passHref legacyBehavior>
                 <chakra.a
                   as={Button}
                   textOverflow={'scroll'}
@@ -289,7 +289,7 @@ export function KraftKitStrip(props: BoxProps) {
               <Text color='slate.200' pb='1'>
                 Try Unikraft without installing any additional dependencies and bootstrap and next project.
               </Text>
-              <NextLink href={`/docs/cli`} passHref>
+              <NextLink href={`/docs/cli`} passHref legacyBehavior>
                 <chakra.a
                   as={Button}
                   variant='link'

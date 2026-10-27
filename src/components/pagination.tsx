@@ -7,7 +7,7 @@ export const PaginationLink = (props) => {
   const { label, href, children, ...rest } = props
 
   return (
-    <NextLink href={href} passHref>
+    <NextLink href={href} passHref legacyBehavior>
       <Link
         _hover={{
           textDecor: 'none',

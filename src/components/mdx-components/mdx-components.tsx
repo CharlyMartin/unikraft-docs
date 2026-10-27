@@ -54,8 +54,8 @@ export const MDXComponents = {
           <NextImage
             src={src}
             alt={description}
-            layout='fill'
-            objectFit='contain'
+            fill
+            style={{ objectFit: 'contain' }}
             {...props}
           />
         </AspectRatio>

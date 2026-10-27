@@ -83,7 +83,7 @@ const AppLink = (props) => {
     text = accentColor == 'white' ? 'black' : 'white'
   }
   return (
-    <Link passHref href={href}>
+    <Link passHref legacyBehavior href={href}>
       <ChakraLink
         bg='transparent'
         display='block'
@@ -460,7 +460,7 @@ export function CatalogStrip(props: BoxProps) {
           mt='16'
           textAlign={'center'}
         >
-            <Link href={`https://github.com/unikraft/catalog/tree/main/examples`} passHref>
+            <Link href={`https://github.com/unikraft/catalog/tree/main/examples`} passHref legacyBehavior>
               <chakra.a
                 as={Button}
                 color='slate.500'

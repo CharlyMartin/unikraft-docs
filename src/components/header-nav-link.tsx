@@ -11,7 +11,7 @@ function NavLink(props: HTMLChakraProps<'a'>) {
   const isActive = pathname.includes(group)
 
   return (
-    <NextLink href={href} passHref>
+    <NextLink href={href} passHref legacyBehavior>
       <chakra.a
         aria-current={isActive ? 'page' : undefined}
         display='block'

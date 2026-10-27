@@ -62,7 +62,7 @@ const SidebarLink = ({ href, children, isExternal = false, ...rest }: SidebarLin
 
   return (
     <Flex align='center' userSelect='none' lineHeight='tall' {...rest}>
-      <NextLink href={href} passHref>
+      <NextLink href={href} passHref legacyBehavior>
         <StyledLink isActive={isActive} ref={link} isExternal={isExternal}>
           {children}
         </StyledLink>

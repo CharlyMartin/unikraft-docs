@@ -4,7 +4,7 @@ import Link from 'next/link'
 const LanguageLink = (props) => {
   const { accentColor, href, children, name } = props
   return (
-    <Link passHref href={href}>
+    <Link passHref legacyBehavior href={href}>
       <ChakraLink
         bg='transparent'
         display='block'

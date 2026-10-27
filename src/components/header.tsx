@@ -56,7 +56,7 @@ function HeaderContent() {
         justify='space-between'
       >
         <Flex align='center'>
-          <NextLink href='/' passHref>
+          <NextLink href='/' passHref legacyBehavior>
             <chakra.a display='block' aria-label='Unikarft, Back to homepage'>
               <Logo pr='9px' />
             </chakra.a>

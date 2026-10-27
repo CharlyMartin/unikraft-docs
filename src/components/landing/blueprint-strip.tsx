@@ -225,7 +225,7 @@ export function BlueprintStrip(props: BoxProps) {
             </SimpleGrid>
           </Box>
           <Box borderTop='solid 1px var(--chakra-colors-slate-200)' p='8' textAlign={'center'}>
-            <NextLink href={`/docs/`} passHref>
+            <NextLink href={`/docs/`} passHref legacyBehavior>
               <chakra.a
                 as={Button}
                 color='slate.500'

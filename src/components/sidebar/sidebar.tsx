@@ -133,7 +133,7 @@ const MainNavLink = ({ href, icon, children, isActive, isExternal }: MainNavLink
   const active = router.asPath.startsWith(href) || !!isActive
 
   return (
-    <NextLink href={href} passHref>
+    <NextLink href={href} passHref legacyBehavior>
       <HStack
         target={isExternal ? '_blank' : undefined}
         as='a'
