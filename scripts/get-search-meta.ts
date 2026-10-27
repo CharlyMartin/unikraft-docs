@@ -43,6 +43,10 @@ async function getMDXMeta(file: string) {
     markdownString,
   )
   const frontMatter = _frontMatter as Record<string, any>
+
+  // Tree anchors that aren't rendered as pages
+  if (frontMatter.unlisted) return []
+
   const tableOfContent = toc(content)
   const json = tableOfContent.json as TOCResultItem[]
   const slug = fileToPath(filePath)
